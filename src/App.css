@@ -54,6 +54,16 @@
   display: block;
 }
 
+.waldo-img.blur {
+  filter: blur(5px);
+}
+
+.start-btn {
+  position: absolute;
+  top: 46%;
+  left: 46%;
+}
+
 .target-box {
   height: 25px;
   width: 25px;

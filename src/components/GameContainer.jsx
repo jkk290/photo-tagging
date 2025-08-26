@@ -2,9 +2,11 @@ import { useRef, useState } from "react"
 import SelectPopUp from "./SelectPopUp"
 
 function GameContainer() {
+    const [gameStart, setGameStart] = useState(false)
     const [gameMsg, setGameMsg] = useState('')
     const [targetBox, setTargetBox] = useState({ x: 0, y: 0, display: false })
     const [popUp, setPopUp] = useState({ x: 0, y: 0, display: false})
+    const [numFound, setNumFound] = useState(0)
     const [characters, setCharacters] = useState([
         {
             name: 'Waldo',
@@ -37,7 +39,6 @@ function GameContainer() {
             found: false
         }
     ])
-    const [numFound, setNumFound] = useState(0)
     const waldoImg = useRef(null)
 
     const handleClick = (e) => {
@@ -47,6 +48,10 @@ function GameContainer() {
         setGameMsg(`Click at (${clickX}, ${clickY})`)
         setTargetBox({ x: clickX, y: clickY, display: true})
         setPopUp({ x: clickX, y: clickY, display: true })
+    }
+
+    const handleStart = () => {
+        setGameStart(true)
     }
 
     const handleClose = (characterName) => {
@@ -72,7 +77,7 @@ function GameContainer() {
             const newNumFound = numFound + 1
             setNumFound(newNumFound)
             setGameMsg(`${characterName} found!`)
-            
+
             if (newNumFound === 5) {
                 setGameMsg('You found all characters!')
             }
@@ -89,8 +94,9 @@ function GameContainer() {
         <>
             <h2>{gameMsg}</h2>
             <div className="photoContainer">
-                <img src="/waldoCropped.png" alt="Find Waldo and friends" className="waldo-img" ref={waldoImg} onClick={handleClick}/>
-                {targetBox.display ? <div className="target-box" style={{left: `${targetBox.x}px`, top: `${targetBox.y}px`}}></div> : null}
+                <img src="/waldoCropped.png" alt="Find Waldo and friends" className={`waldo-img ${!gameStart ? 'blur' : null}`} ref={waldoImg} onClick={handleClick}/>
+                { !gameStart ? <button onClick={handleStart} className="start-btn">Start</button> : null }
+                { targetBox.display ? <div className="target-box" style={{left: `${targetBox.x}px`, top: `${targetBox.y}px`}}></div> : null }
                 <SelectPopUp characters={characters} clickX={popUp.x} clickY={popUp.y} visible={popUp.display} onClose={handleClose}/>
             </div>
         </>
