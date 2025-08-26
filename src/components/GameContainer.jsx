@@ -1,5 +1,6 @@
 import { useRef, useState } from "react"
 import SelectPopUp from "./SelectPopUp"
+import Timer from "./Timer"
 
 function GameContainer() {
     const [gameStart, setGameStart] = useState(false)
@@ -45,7 +46,6 @@ function GameContainer() {
         const clickX = e.nativeEvent.offsetX
         const clickY = e.nativeEvent.offsetY
 
-        setGameMsg(`Click at (${clickX}, ${clickY})`)
         setTargetBox({ x: clickX, y: clickY, display: true})
         setPopUp({ x: clickX, y: clickY, display: true })
     }
@@ -80,6 +80,7 @@ function GameContainer() {
 
             if (newNumFound === 5) {
                 setGameMsg('You found all characters!')
+                setGameStart(false)
             }
         }       
 
@@ -93,8 +94,10 @@ function GameContainer() {
     return (
         <>
             <h2>{gameMsg}</h2>
+            <Timer gameStart={gameStart}/>
+            <button onClick={() => setGameStart(false)}>Stop</button>
             <div className="photoContainer">
-                <img src="/waldoCropped.png" alt="Find Waldo and friends" className={`waldo-img ${!gameStart ? 'blur' : null}`} ref={waldoImg} onClick={handleClick}/>
+                <img src="/test.png" alt="Find Waldo and friends" className={`waldo-img ${!gameStart ? 'blur' : null}`} ref={waldoImg} onClick={handleClick}/>
                 { !gameStart ? <button onClick={handleStart} className="start-btn">Start</button> : null }
                 { targetBox.display ? <div className="target-box" style={{left: `${targetBox.x}px`, top: `${targetBox.y}px`}}></div> : null }
                 <SelectPopUp characters={characters} clickX={popUp.x} clickY={popUp.y} visible={popUp.display} onClose={handleClose}/>
