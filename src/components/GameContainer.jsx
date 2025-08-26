@@ -18,7 +18,9 @@ function GameContainer() {
 
     const handleClose = () => {
         setTargetBox({ x: 0, y: 0, display: false })
-        setPopUp({ x: 0, y: 0, display: false })
+        setPopUp((prev) => {
+            return {...prev, display: false}
+        })
     }
 
     return (
@@ -27,7 +29,7 @@ function GameContainer() {
             <div className="photoContainer">
                 <img src="/test.png" alt="Find Waldo and friends" className="waldo-img" ref={waldoImg} onClick={handleClick}/>
                 {targetBox.display ? <div className="target-box" style={{left: `${targetBox.x}px`, top: `${targetBox.y}px`}}></div> : null}
-                {popUp.display ? <SelectPopUp clickX={popUp.x} clickY={popUp.y} onClose={handleClose}/> : null}
+                <SelectPopUp clickX={popUp.x} clickY={popUp.y} visible={popUp.display} onClose={handleClose}/>
             </div>
         </>
     )

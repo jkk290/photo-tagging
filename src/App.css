@@ -70,6 +70,16 @@
   background-color: rgba(0, 0, 0, 0.4);
   font-size: 12px;
   position: absolute;
+  transition: transform .5s ease-out, opacity .3s ease-out;
+}
+
+.popUp.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(35%, -35%);
+}
+
+.popUp.visible {
   transform: translate(35%, 15%);
 }
 
