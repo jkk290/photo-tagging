@@ -5,35 +5,40 @@ function GameContainer() {
     const [gameMsg, setGameMsg] = useState('')
     const [targetBox, setTargetBox] = useState({ x: 0, y: 0, display: false })
     const [popUp, setPopUp] = useState({ x: 0, y: 0, display: false})
-    const waldoImg = useRef(null)
-
-    const characters = [
+    const [characters, setCharacters] = useState([
         {
             name: 'Waldo',
             posX: 445,
-            posY: 245
+            posY: 245,
+            found: false
         },
         {
             name: 'Woof',
             posX: 611,
-            posY: 489
+            posY: 489,
+            found: false
         },
         {
             name: 'Wenda',
             posX: 178,
-            posY: 220
+            posY: 220,
+            found: false
         },
         {
             name: 'Wizard',
             posX: 858,
-            posY: 702
+            posY: 702,
+            found: false
         },
         {
             name: 'Odlaw',
             posX: 195,
-            posY: 478
+            posY: 478,
+            found: false
         }
-    ]
+    ])
+    const [numFound, setNumFound] = useState(0)
+    const waldoImg = useRef(null)
 
     const handleClick = (e) => {
         const clickX = e.nativeEvent.offsetX
@@ -46,17 +51,38 @@ function GameContainer() {
 
     const handleClose = (characterName) => {
 
-        if (characterName === 'Waldo') {
-            if ((targetBox.x >= characters[0].posX - 35) && (targetBox.x <= characters[0].posX + 35)) {
-                setGameMsg('Waldo found!')
-            }
-        }
+        const minX = targetBox.x - 35
+        const maxX = targetBox.x + 35
+        const minY = targetBox.y - 35
+        const maxY = targetBox.y + 35
 
+        const result = characters.find((character) => {
+            return (character.posX >= minX && character.posX <= maxX) && (character.posY >= minY && character.posY <= maxY)
+        })
+
+        if (result && result.name === characterName && result.found === false) {
+            setCharacters(prev => {
+                const foundIndex = prev.findIndex((character) => character.name === characterName)
+                const updatedCharacter = {...prev[foundIndex], found: true}
+                const newCharactersArray = [...prev]
+                newCharactersArray[foundIndex] = updatedCharacter
+                return newCharactersArray
+            })
+
+            const newNumFound = numFound + 1
+            setNumFound(newNumFound)
+            setGameMsg(`${characterName} found!`)
+            
+            if (newNumFound === 5) {
+                setGameMsg('You found all characters!')
+            }
+        }       
 
         setTargetBox({ x: 0, y: 0, display: false })
         setPopUp((prev) => {
             return {...prev, display: false}
         })
+       
     }
 
     return (
