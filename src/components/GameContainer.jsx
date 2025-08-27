@@ -78,12 +78,7 @@ function GameContainer({ updateScores }) {
         setGameMsg('')
         setNumFound(0)
         const reset = characters.map((character) => {
-           return {
-                name: character.name,
-                posX: character.posX,
-                posY: character.posY,
-                found: false
-            }
+            return { ...character, found: false }
         })
         setCharacters(reset)
     }

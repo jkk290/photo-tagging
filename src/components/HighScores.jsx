@@ -2,9 +2,10 @@ import formatTime from "../utils/formatTime"
 
 function HighScores({ scores }) {
 
-    console.log(scores)
+    const sortedScores = scores.sort((a, b) => a.timer - b.timer)
+    console.log(sortedScores)
 
-    const formattedScores = scores.map((score) => {
+    const formattedScores = sortedScores.map((score) => {
         const formatted = formatTime(score.timer)
         return {
             playerName: score.playerName,
