@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import SelectPopUp from "./SelectPopUp"
 import Timer from "./Timer"
 import NewRecord from "./NewRecord"
@@ -10,6 +10,7 @@ function GameContainer({ updateScores }) {
     const [targetBox, setTargetBox] = useState({ x: 0, y: 0, display: false })
     const [popUp, setPopUp] = useState({ x: 0, y: 0, display: false})
     const [numFound, setNumFound] = useState(0)
+    const [recordFormOpen, setRecordFormOpen] = useState(false)
     const [characters, setCharacters] = useState([
         {
             name: 'Waldo',
@@ -43,6 +44,26 @@ function GameContainer({ updateScores }) {
         }
     ])
     const waldoImg = useRef(null)
+    const recordForm = useRef(null)
+
+    useEffect(() => {
+        const dialog = recordForm.current
+        const handleClose = () => {
+            setRecordFormOpen(false)
+        }
+
+        if (recordFormOpen) {
+            dialog?.showModal()
+            dialog?.addEventListener('close', handleClose)
+        } else {
+            dialog?.close()
+        }
+
+        return () => {
+            dialog?.removeEventListener('close', handleClose)
+        }
+
+    }, [recordFormOpen])
 
     const handleClick = (e) => {
         const clickX = e.nativeEvent.offsetX
@@ -54,11 +75,23 @@ function GameContainer({ updateScores }) {
 
     const handleStart = () => {
         setGameStart(true)
+        setGameMsg('')
+        setNumFound(0)
+        const reset = characters.map((character) => {
+           return {
+                name: character.name,
+                posX: character.posX,
+                posY: character.posY,
+                found: false
+            }
+        })
+        setCharacters(reset)
     }
 
     const saveRecord = (playerName) => {
         const record = {playerName, timer }
         updateScores(record)
+        setRecordFormOpen(false)
     }
 
     const handleClose = (characterName) => {
@@ -88,6 +121,7 @@ function GameContainer({ updateScores }) {
             if (newNumFound === 5) {
                 setGameMsg('You found all characters!')
                 setGameStart(false)
+                setRecordFormOpen(true)
             }
         }       
 
@@ -122,13 +156,11 @@ function GameContainer({ updateScores }) {
 
                 <SelectPopUp 
                     characters={characters} 
-                    clickX={popUp.x} 
-                    clickY={popUp.y} 
-                    visible={popUp.display} 
+                    popUp={popUp}
                     onClose={handleClose}
                 />
 
-                {!gameStart && numFound === 5 ? <NewRecord saveRecord={saveRecord} /> : null}
+                {recordFormOpen ? <dialog ref={recordForm}><NewRecord saveRecord={saveRecord} /></dialog> : null}
             </div>
         </>
     )

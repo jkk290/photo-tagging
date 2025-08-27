@@ -1,7 +1,7 @@
-function SelectPopUp( { characters, clickX, clickY, visible, onClose }) {
+function SelectPopUp( { characters, popUp, onClose }) {
     
     return (
-        <div className={`popUp ${visible ? 'visible' : 'hidden'}`} style={{left: `${clickX}px`, top: `${clickY}px`}}>
+        <div className={`popUp ${popUp.display ? 'visible' : 'hidden'}`} style={{left: `${popUp.x}px`, top: `${popUp.y}px`}}>
             <ul>
                 {characters.map(character => {
                     return (
