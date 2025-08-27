@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
+import formatTime from "../utils/formatTime"
 
-function Timer({ gameStart }) {
-    const [timer, setTimer] = useState(0)
+function Timer({ gameStart, timer, setTimer }) {
 
     useEffect(() => {
         let intervalId
@@ -16,18 +16,12 @@ function Timer({ gameStart }) {
         return () => {
             clearInterval(intervalId)
         }
-    }, [gameStart])
+    }, [gameStart, setTimer])
 
-    const formattedTimer = () => {
-        let minutes = Math.floor(timer / 60)
-        let seconds = timer % 60
+    const formatted = formatTime(timer)
 
-        return { minutes: minutes, seconds: seconds.toString().padStart(2, '0') }
-    }
-
-    const formatted = formattedTimer()
     return (
-        <div>
+        <div className='timer'>
             <h2>{formatted.minutes}:{formatted.seconds} </h2>
         </div>
     )

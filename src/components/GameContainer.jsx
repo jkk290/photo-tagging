@@ -1,10 +1,12 @@
 import { useRef, useState } from "react"
 import SelectPopUp from "./SelectPopUp"
 import Timer from "./Timer"
+import NewRecord from "./NewRecord"
 
-function GameContainer() {
+function GameContainer({ updateScores }) {
     const [gameStart, setGameStart] = useState(false)
     const [gameMsg, setGameMsg] = useState('')
+    const [timer, setTimer] = useState(0)
     const [targetBox, setTargetBox] = useState({ x: 0, y: 0, display: false })
     const [popUp, setPopUp] = useState({ x: 0, y: 0, display: false})
     const [numFound, setNumFound] = useState(0)
@@ -54,6 +56,11 @@ function GameContainer() {
         setGameStart(true)
     }
 
+    const saveRecord = (playerName) => {
+        const record = {playerName, timer }
+        updateScores(record)
+    }
+
     const handleClose = (characterName) => {
 
         const minX = targetBox.x - 35
@@ -93,14 +100,35 @@ function GameContainer() {
 
     return (
         <>
-            <h2>{gameMsg}</h2>
-            <Timer gameStart={gameStart}/>
-            <button onClick={() => setGameStart(false)}>Stop</button>
+            <h2 className='gameMsg'>{gameMsg}</h2>
+
+            <Timer 
+                gameStart={gameStart} 
+                timer={timer} 
+                setTimer={setTimer}
+            />
+            
             <div className="photoContainer">
-                <img src="/test.png" alt="Find Waldo and friends" className={`waldo-img ${!gameStart ? 'blur' : null}`} ref={waldoImg} onClick={handleClick}/>
+                <img 
+                    src="/waldoCropped.png" 
+                    alt="Find Waldo and friends" 
+                    className={`waldo-img ${!gameStart ? 'blur' : null}`} 
+                    ref={waldoImg} 
+                    onClick={handleClick}
+                />
                 { !gameStart ? <button onClick={handleStart} className="start-btn">Start</button> : null }
+
                 { targetBox.display ? <div className="target-box" style={{left: `${targetBox.x}px`, top: `${targetBox.y}px`}}></div> : null }
-                <SelectPopUp characters={characters} clickX={popUp.x} clickY={popUp.y} visible={popUp.display} onClose={handleClose}/>
+
+                <SelectPopUp 
+                    characters={characters} 
+                    clickX={popUp.x} 
+                    clickY={popUp.y} 
+                    visible={popUp.display} 
+                    onClose={handleClose}
+                />
+
+                {!gameStart && numFound === 5 ? <NewRecord saveRecord={saveRecord} /> : null}
             </div>
         </>
     )

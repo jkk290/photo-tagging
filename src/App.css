@@ -1,51 +1,42 @@
 #root {
-  max-width: 1280px;
+  max-width: 1920px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.game {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.scoresTable {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.title {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2
 }
 
-.card {
-  padding: 2em;
+.gameMsg {
+  grid-column: 3 / 4;
+  grid-row: 2 / 3;
 }
 
-.read-the-docs {
-  color: #888;
+.timer {
+  grid-column: 3 / 4;
+  grid-row: 1 / 2;
 }
 
 .photoContainer {
   margin: 0;
   padding: 0;
   position: relative;
-  display: inline-block;
+  grid-column: 2 / 3;
+  grid-row: 2 / 3
 }
 
 .waldo-img {
@@ -59,6 +50,12 @@
 }
 
 .start-btn {
+  position: absolute;
+  top: 46%;
+  left: 46%;
+}
+
+.newRecordForm {
   position: absolute;
   top: 46%;
   left: 46%;
