@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react"
 import SelectPopUp from "./SelectPopUp"
 import Timer from "./Timer"
 import NewRecord from "./NewRecord"
+import CharacterList from './CharacterList'
 
 function GameContainer({ updateScores }) {
     const [gameStart, setGameStart] = useState(false)
-    const [gameMsg, setGameMsg] = useState('')
     const [timer, setTimer] = useState(0)
     const [targetBox, setTargetBox] = useState({ x: 0, y: 0, display: false })
     const [popUp, setPopUp] = useState({ x: 0, y: 0, display: false})
@@ -75,7 +75,6 @@ function GameContainer({ updateScores }) {
 
     const handleStart = () => {
         setGameStart(true)
-        setGameMsg('')
         setNumFound(0)
         const reset = characters.map((character) => {
             return { ...character, found: false }
@@ -111,10 +110,8 @@ function GameContainer({ updateScores }) {
 
             const newNumFound = numFound + 1
             setNumFound(newNumFound)
-            setGameMsg(`${characterName} found!`)
 
             if (newNumFound === 5) {
-                setGameMsg('You found all characters!')
                 setGameStart(false)
                 setRecordFormOpen(true)
             }
@@ -129,12 +126,14 @@ function GameContainer({ updateScores }) {
 
     return (
         <>
-            <h2 className='gameMsg'>{gameMsg}</h2>
-
             <Timer 
                 gameStart={gameStart} 
                 timer={timer} 
                 setTimer={setTimer}
+            />
+
+            <CharacterList 
+                characters={characters}
             />
             
             <div className="photoContainer">
@@ -159,7 +158,6 @@ function GameContainer({ updateScores }) {
             </div>
         </>
     )
-
 }
 
 export default GameContainer

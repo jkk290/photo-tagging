@@ -1,15 +1,23 @@
 function CharacterList({ characters }) {
+
+    const characterList = characters.map(character => {
+        return {...character, imgSrc: `/${character.name}.png`}
+    })
     
     return (
         <div className='characterList'>
             <ul>
-                {characters.map((character) => {
-                    <li 
-                        key={character.name} 
-                        className={character.found ? 'characterFound' : null}
-                    >
-                        {character.name}
-                    </li>
+                {characterList.map(character => {
+                    return (
+                        <li 
+                            key={character.name} 
+                            className={character.found ? 'characterFound' : null}
+                        >
+                            <img src={`${character.imgSrc}`} alt={`${character.name}`} />
+                            { character.name === 'Woof' ? <p>Woof (Just his tail)</p> : <p>{character.name}</p> }                            
+                        </li>
+                    )
+                    
                 })}
             </ul>
         </div>
