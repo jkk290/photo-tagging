@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import { MapPinCheckInside } from 'lucide-react'
 import SelectPopUp from "./SelectPopUp"
 import Timer from "./Timer"
 import NewRecord from "./NewRecord"
@@ -68,7 +69,7 @@ function GameContainer({ updateScores }) {
     const handleClick = (e) => {
         const clickX = e.nativeEvent.offsetX
         const clickY = e.nativeEvent.offsetY
-
+        console.log(`Click at ${clickX} and ${clickY}`)
         setTargetBox({ x: clickX, y: clickY, display: true})
         setPopUp({ x: clickX, y: clickY, display: true })
     }
@@ -137,6 +138,18 @@ function GameContainer({ updateScores }) {
             />
             
             <div className="photoContainer">
+                {characters.map(character => {
+                        if (character.found) {
+                            return (
+                                <MapPinCheckInside 
+                                    color="blue" 
+                                    size={24} 
+                                    style={{left: `${character.posX}px`, top: `${character.posY}px`}}
+                                />
+                            )
+                        }                      
+                })}
+
                 <img 
                     src="/waldoCropped.png" 
                     alt="Find Waldo and friends" 

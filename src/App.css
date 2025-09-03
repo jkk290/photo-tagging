@@ -61,6 +61,12 @@
   grid-row: 2 / 3
 }
 
+.lucide-map-pin-check-inside {
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
 .waldo-img {
   max-width: 1080px;
   border-radius: 10px;
