@@ -12,38 +12,7 @@ function GameContainer({ updateScores }) {
     const [popUp, setPopUp] = useState({ x: 0, y: 0, display: false})
     const [numFound, setNumFound] = useState(0)
     const [recordFormOpen, setRecordFormOpen] = useState(false)
-    const [characters, setCharacters] = useState([
-        {
-            name: 'Waldo',
-            posX: 445,
-            posY: 245,
-            found: false
-        },
-        {
-            name: 'Woof',
-            posX: 611,
-            posY: 489,
-            found: false
-        },
-        {
-            name: 'Wenda',
-            posX: 178,
-            posY: 220,
-            found: false
-        },
-        {
-            name: 'Wizard',
-            posX: 858,
-            posY: 702,
-            found: false
-        },
-        {
-            name: 'Odlaw',
-            posX: 195,
-            posY: 478,
-            found: false
-        }
-    ])
+    const [characters, setCharacters] = useState([])
     const waldoImg = useRef(null)
     const recordForm = useRef(null)
 
@@ -65,6 +34,21 @@ function GameContainer({ updateScores }) {
         }
 
     }, [recordFormOpen])
+
+    useEffect(() => {
+        const fetchCharacters = async () => {
+            const response = await fetch('http://localhost:3000/api/characters')
+
+            if (!response.ok) {
+                console.log('Unable to get characters')
+            }
+
+            const data = await response.json()
+
+            setCharacters(data)
+        }
+        fetchCharacters()
+    }, [])
 
     const handleClick = (e) => {
         const clickX = e.nativeEvent.offsetX
