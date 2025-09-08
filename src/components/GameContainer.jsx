@@ -7,6 +7,7 @@ import CharacterList from './CharacterList'
 
 function GameContainer({ updateScores }) {
     const [gameStart, setGameStart] = useState(false)
+    const [gameId, setGameId] = useState(null)
     const [timer, setTimer] = useState(0)
     const [targetBox, setTargetBox] = useState({ x: 0, y: 0, display: false })
     const [popUp, setPopUp] = useState({ x: 0, y: 0, display: false})
@@ -58,7 +59,21 @@ function GameContainer({ updateScores }) {
         setPopUp({ x: clickX, y: clickY, display: true })
     }
 
-    const handleStart = () => {
+    const handleStart = async () => {
+        setGameId(crypto.randomUUID())
+
+        const response = await fetch('http://localhost:3000', {
+            method: 'post',
+            body: {
+                gameId: gameId,
+                gameState: true
+            }
+        })      
+
+        if (!response.ok) {
+            return console.log('Unable to start game')
+        }
+        
         setGameStart(true)
         setNumFound(0)
         const reset = characters.map((character) => {
