@@ -60,21 +60,25 @@ function GameContainer({ updateScores }) {
     }
 
     const handleStart = async () => {
-        setGameId(crypto.randomUUID())
 
-        const response = await fetch('http://localhost:3000', {
+        const response = await fetch('http://localhost:3000/api/games', {
             method: 'post',
-            body: {
-                gameId: gameId,
-                gameState: true
-            }
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                gameStart: true
+            })
         })      
 
         if (!response.ok) {
             return console.log('Unable to start game')
         }
-        
+
+        const data = await response.json()
+
         setGameStart(true)
+        setGameId(data.gameId)
         setNumFound(0)
         const reset = characters.map((character) => {
             return { ...character, found: false }
@@ -83,23 +87,50 @@ function GameContainer({ updateScores }) {
     }
 
     const saveRecord = (playerName) => {
-        const record = {playerName, timer }
+        const record = {
+            gameId: gameId,
+            gameStart: false,
+            playerName: playerName, 
+            endTime: timer 
+        }
         updateScores(record)
         setRecordFormOpen(false)
     }
 
-    const handleClose = (characterName) => {
+    const handleClose = async (characterName) => {
 
-        const minX = targetBox.x - 35
-        const maxX = targetBox.x + 35
-        const minY = targetBox.y - 35
-        const maxY = targetBox.y + 35
+        // const minX = targetBox.x - 35
+        // const maxX = targetBox.x + 35
+        // const minY = targetBox.y - 35
+        // const maxY = targetBox.y + 35
 
-        const result = characters.find((character) => {
-            return (character.posX >= minX && character.posX <= maxX) && (character.posY >= minY && character.posY <= maxY)
+        // const result = characters.find((character) => {
+        //     return (character.posX >= minX && character.posX <= maxX) && (character.posY >= minY && character.posY <= maxY)
+        // })
+
+        const characterInfo = characters.find((character) => {
+            return (character.name === characterName)
         })
 
-        if (result && result.name === characterName && result.found === false) {
+        if (characterInfo.found) {
+            return console.log('Character already found')
+        }
+
+        const response = await fetch('http://localhost:3000/api/characters/verify', {
+            method: 'post',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: characterName,
+                posX: targetBox.x,
+                posY: targetBox.y
+            })
+        })
+
+        const result = await response.json()
+
+        if (result && result.found) {
             setCharacters(prev => {
                 const foundIndex = prev.findIndex((character) => character.name === characterName)
                 const updatedCharacter = {...prev[foundIndex], found: true}

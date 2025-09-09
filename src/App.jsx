@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import GameContainer from './components/GameContainer'
 import HighScores from './components/HighScores'
@@ -6,9 +6,28 @@ import HighScores from './components/HighScores'
 function App() {
   const [scores, setScores] = useState([])
 
-  const updateScores = (record) => {
-    setScores(prev => {
-      return [...prev, record]
+  useEffect(() => {
+    const fetchScores = async () => {
+      const response = await fetch('http://localhost:3000/api/records')
+
+      const data = await response.json()
+
+      setScores(data)
+    }
+    fetchScores()
+  }, [])
+
+  const updateScores = async (record) => {
+    // setScores(prev => {
+    //   return [...prev, record]
+    // })
+
+    await fetch('http://localhost/api/records', {
+      method: 'post',
+      headers: {
+          'content-type': 'application/json'
+      },
+      body: JSON.stringify(record)
     })
   }
 
