@@ -1,8 +1,12 @@
-function CharacterList({ characters }) {
+function CharacterList({ characters, isLoading }) {
 
     const characterList = characters.map(character => {
         return {...character, imgSrc: `/${character.name}.png`}
     })
+
+    if (isLoading) {
+        return <p className="loading-msg">Loading...</p>
+    }
     
     return (
         <div className='characterList'>
@@ -17,7 +21,6 @@ function CharacterList({ characters }) {
                             { character.name === 'Woof' ? <p>Woof (Just his tail)</p> : <p>{character.name}</p> }                            
                         </li>
                     )
-                    
                 })}
             </ul>
         </div>

@@ -14,6 +14,7 @@ function GameContainer({ updateScores }) {
     const [numFound, setNumFound] = useState(0)
     const [recordFormOpen, setRecordFormOpen] = useState(false)
     const [characters, setCharacters] = useState([])
+    const [isLoading, setIsLoading] = useState(null)
     const waldoImg = useRef(null)
     const recordForm = useRef(null)
 
@@ -36,6 +37,7 @@ function GameContainer({ updateScores }) {
     useEffect(() => {
         const fetchCharacters = async () => {
             try {
+                setIsLoading(true)
                 const response = await fetch('http://localhost:3000/api/characters')
                 if (!response.ok) {
                     console.log('Unable to get characters')
@@ -44,6 +46,8 @@ function GameContainer({ updateScores }) {
                 setCharacters(data)
             } catch (error) {
                 console.log('Unable to get characters', error)
+            } finally {
+                setIsLoading(false)
             }            
         }
         fetchCharacters()
@@ -152,6 +156,7 @@ function GameContainer({ updateScores }) {
 
             <CharacterList 
                 characters={characters}
+                isLoading={isLoading}
             />
             
             <div className="photoContainer">
