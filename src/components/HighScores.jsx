@@ -1,6 +1,6 @@
 import formatTime from "../utils/formatTime"
 
-function HighScores({ scores }) {
+function HighScores({ scores, isLoading }) {
 
     const sortedScores = scores.sort((a, b) => a.timer - b.timer)
     console.log(sortedScores)
@@ -14,8 +14,10 @@ function HighScores({ scores }) {
         }
     })
 
-    console.log(formattedScores)
-
+    if (isLoading) {
+        return <p className="loading-msg">Loading...</p>
+    }
+    
     return (
         <table className="scoresTable">
             <thead>

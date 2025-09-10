@@ -22,31 +22,29 @@ function GameContainer({ updateScores }) {
         const handleClose = () => {
             setRecordFormOpen(false)
         }
-
         if (recordFormOpen) {
             dialog?.showModal()
             dialog?.addEventListener('close', handleClose)
         } else {
             dialog?.close()
         }
-
         return () => {
             dialog?.removeEventListener('close', handleClose)
         }
-
     }, [recordFormOpen])
 
     useEffect(() => {
         const fetchCharacters = async () => {
-            const response = await fetch('http://localhost:3000/api/characters')
-
-            if (!response.ok) {
-                console.log('Unable to get characters')
-            }
-
-            const data = await response.json()
-
-            setCharacters(data)
+            try {
+                const response = await fetch('http://localhost:3000/api/characters')
+                if (!response.ok) {
+                    console.log('Unable to get characters')
+                }
+                const data = await response.json()
+                setCharacters(data)
+            } catch (error) {
+                console.log('Unable to get characters', error)
+            }            
         }
         fetchCharacters()
     }, [])
@@ -54,105 +52,94 @@ function GameContainer({ updateScores }) {
     const handleClick = (e) => {
         const clickX = e.nativeEvent.offsetX
         const clickY = e.nativeEvent.offsetY
-        console.log(`Click at ${clickX} and ${clickY}`)
         setTargetBox({ x: clickX, y: clickY, display: true})
         setPopUp({ x: clickX, y: clickY, display: true })
     }
 
     const handleStart = async () => {
+        try {
+            const response = await fetch('http://localhost:3000/api/games/start', {
+                method: 'post',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    gameStart: true
+                })
+            })      
 
-        const response = await fetch('http://localhost:3000/api/games', {
-            method: 'post',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify({
-                gameStart: true
+            if (!response.ok) {
+                return console.log('Unable to start game')
+            }
+            const data = await response.json()
+            setGameStart(true)
+            setGameId(data.gameId)
+            setNumFound(0)
+            const charactersNotFound = characters.map((character) => {
+                return { ...character, found: false }
             })
-        })      
-
-        if (!response.ok) {
-            return console.log('Unable to start game')
+            setCharacters(charactersNotFound)
+        } catch (error) {
+            console.log('Unable to start game', error)
         }
-
-        const data = await response.json()
-
-        setGameStart(true)
-        setGameId(data.gameId)
-        setNumFound(0)
-        const reset = characters.map((character) => {
-            return { ...character, found: false }
-        })
-        setCharacters(reset)
+       
     }
 
     const saveRecord = (playerName) => {
-        const record = {
+        const newRecord = {
             gameId: gameId,
             gameStart: false,
             playerName: playerName, 
             endTime: timer 
         }
-        updateScores(record)
+        updateScores(newRecord)
         setRecordFormOpen(false)
     }
 
     const handleClose = async (characterName) => {
-
-        // const minX = targetBox.x - 35
-        // const maxX = targetBox.x + 35
-        // const minY = targetBox.y - 35
-        // const maxY = targetBox.y + 35
-
-        // const result = characters.find((character) => {
-        //     return (character.posX >= minX && character.posX <= maxX) && (character.posY >= minY && character.posY <= maxY)
-        // })
-
         const characterInfo = characters.find((character) => {
             return (character.name === characterName)
         })
-
         if (characterInfo.found) {
             return console.log('Character already found')
         }
 
-        const response = await fetch('http://localhost:3000/api/characters/verify', {
-            method: 'post',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify({
-                name: characterName,
-                posX: targetBox.x,
-                posY: targetBox.y
+        try {
+            const response = await fetch('http://localhost:3000/api/characters/verify', {
+                method: 'post',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: characterName,
+                    posX: targetBox.x,
+                    posY: targetBox.y
+                })
             })
-        })
-
-        const result = await response.json()
-
-        if (result && result.found) {
-            setCharacters(prev => {
-                const foundIndex = prev.findIndex((character) => character.name === characterName)
-                const updatedCharacter = {...prev[foundIndex], found: true}
-                const newCharactersArray = [...prev]
-                newCharactersArray[foundIndex] = updatedCharacter
-                return newCharactersArray
-            })
-
-            const newNumFound = numFound + 1
-            setNumFound(newNumFound)
-
-            if (newNumFound === 5) {
-                setGameStart(false)
-                setRecordFormOpen(true)
+            const result = await response.json()
+            if (result && result.found) {
+                setCharacters(prev => {
+                    const foundIndex = prev.findIndex((character) => character.name === characterName)
+                    const updatedCharacter = {...prev[foundIndex], found: true}
+                    const newCharactersArray = [...prev]
+                    newCharactersArray[foundIndex] = updatedCharacter
+                    return newCharactersArray
+                })
+                const newNumFound = numFound + 1
+                setNumFound(newNumFound)
+                const maxCharacters = characters.length
+                if (newNumFound === maxCharacters) {
+                    setGameStart(false)
+                    setRecordFormOpen(true)
+                }
             }
-        }       
-
-        setTargetBox({ x: 0, y: 0, display: false })
-        setPopUp((prev) => {
-            return {...prev, display: false}
-        })
-       
+            setTargetBox({ x: 0, y: 0, display: false })
+            setPopUp((prev) => {
+                return {...prev, display: false}
+            })
+        } catch (error) {
+            console.log('Unable to verify character', error)
+        }               
     }
 
     return (
@@ -172,6 +159,7 @@ function GameContainer({ updateScores }) {
                         if (character.found) {
                             return (
                                 <MapPinCheckInside 
+                                    key={character.name}
                                     color="blue" 
                                     size={24} 
                                     style={{left: `${character.posX}px`, top: `${character.posY}px`}}
