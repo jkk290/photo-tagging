@@ -3,7 +3,6 @@
   height: 100%;
   width: 100%;
   text-align: center;
-  opacity: 10%;
 }
 
 .game {
@@ -38,7 +37,6 @@
 }
 
 .title {
-  opacity: 3%;
   margin: 0;
   grid-column: 2 / 3;
   grid-row: 1 / 2

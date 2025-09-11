@@ -66,7 +66,7 @@ function GameContainer({ updateScores }) {
 
         const offsetX = imgRect.left - containerRect.left
         const offsetY = imgRect.top - containerRect.top
-        
+
         const finalX = clickX + offsetX
         const finalY = clickY + offsetY
 
@@ -177,14 +177,28 @@ function GameContainer({ updateScores }) {
             <div className="photoContainer">
                 {characters.map(character => {
                         if (character.found) {
-                            return (
-                                <MapPinCheckInside 
-                                    key={character.name}
-                                    color="blue" 
-                                    size={24} 
-                                    style={{left: `${character.posX}px`, top: `${character.posY}px`}}
-                                />
-                            )
+                            const imgElement = waldoImg.current
+                            if (imgElement) {
+                                const imgRect = imgElement.getBoundingClientRect()
+
+                                const photoContainer = imgElement.parentElement
+                                const containerRect = photoContainer.getBoundingClientRect()
+
+                                const offsetX = imgRect.left - containerRect.left
+                                const offsetY = imgRect.top - containerRect.top
+
+                                const finalX = character.posX + offsetX
+                                const finalY = character.posY + offsetY                            
+                            
+                                return (
+                                    <MapPinCheckInside 
+                                        key={character.name}
+                                        color="blue" 
+                                        size={24} 
+                                        style={{left: `${finalX}px`, top: `${finalY}px`}}
+                                    />
+                                )
+                            }
                         }                      
                 })}
 
