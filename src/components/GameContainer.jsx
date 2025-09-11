@@ -4,6 +4,7 @@ import SelectPopUp from "./SelectPopUp"
 import Timer from "./Timer"
 import NewRecord from "./NewRecord"
 import CharacterList from './CharacterList'
+const apiUrl = import.meta.env.VITE_API_URL
 
 function GameContainer({ updateScores }) {
     const [gameStart, setGameStart] = useState(false)
@@ -39,7 +40,7 @@ function GameContainer({ updateScores }) {
         const fetchCharacters = async () => {
             try {
                 setIsLoading(true)
-                const response = await fetch('http://localhost:3000/api/characters')
+                const response = await fetch(`${apiUrl}/characters`)
                 if (!response.ok) {
                     console.log('Unable to get characters')
                 }
@@ -77,7 +78,7 @@ function GameContainer({ updateScores }) {
 
     const handleStart = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/games/start', {
+            const response = await fetch(`${apiUrl}/games/start`, {
                 method: 'post',
                 headers: {
                     'content-type': 'application/json'
@@ -124,7 +125,7 @@ function GameContainer({ updateScores }) {
         }
 
         try {
-            const response = await fetch('http://localhost:3000/api/characters/verify', {
+            const response = await fetch(`${apiUrl}/characters/verify`, {
                 method: 'post',
                 headers: {
                     'content-type': 'application/json'

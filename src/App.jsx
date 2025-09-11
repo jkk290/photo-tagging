@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import GameContainer from './components/GameContainer'
 import HighScores from './components/HighScores'
+const apiUrl = import.meta.env.VITE_API_URL
 
 function App() {
   const [scores, setScores] = useState([])
@@ -11,7 +12,7 @@ function App() {
     const fetchScores = async () => {
       try {
         setIsLoading(true)
-        const response = await fetch('http://localhost:3000/api/records')
+        const response = await fetch(`${apiUrl}/records`)
         const data = await response.json()
         setScores(data)
       } catch (error) {
@@ -25,7 +26,7 @@ function App() {
 
   const updateScores = async (record) => {
     try {
-      await fetch('http://localhost:3000/api/games/end', {
+      await fetch(`${apiUrl}/games/end`, {
       method: 'post',
         headers: {
             'content-type': 'application/json'
