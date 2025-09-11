@@ -10,6 +10,7 @@ function GameContainer({ updateScores }) {
     const [gameId, setGameId] = useState(null)
     const [timer, setTimer] = useState(0)
     const [targetBox, setTargetBox] = useState({ x: 0, y: 0, display: false })
+    const [clickAt, setClickAt] = useState({ x: 0, y: 0 })
     const [popUp, setPopUp] = useState({ x: 0, y: 0, display: false})
     const [numFound, setNumFound] = useState(0)
     const [recordFormOpen, setRecordFormOpen] = useState(false)
@@ -54,11 +55,24 @@ function GameContainer({ updateScores }) {
     }, [])
 
     const handleClick = (e) => {
-        const clickX = e.nativeEvent.offsetX
-        const clickY = e.nativeEvent.offsetY
-        console.log(`Click at ${clickX}, ${clickY}`)
-        setTargetBox({ x: clickX, y: clickY, display: true})
-        setPopUp({ x: clickX, y: clickY, display: true })
+        const imgElement = e.target
+        const imgRect = imgElement.getBoundingClientRect()
+
+        const photoContainer = imgElement.parentElement
+        const containerRect = photoContainer.getBoundingClientRect()
+
+        const clickX = e.clientX - imgRect.left
+        const clickY = e.clientY - imgRect.top
+
+        const offsetX = imgRect.left - containerRect.left
+        const offsetY = imgRect.top - containerRect.top
+        
+        const finalX = clickX + offsetX
+        const finalY = clickY + offsetY
+
+        setTargetBox({ x: finalX, y: finalY, display: true})
+        setPopUp({ x: finalX, y: finalY, display: true})
+        setClickAt( { x: clickX, y: clickY })
     }
 
     const handleStart = async () => {
@@ -117,8 +131,8 @@ function GameContainer({ updateScores }) {
                 },
                 body: JSON.stringify({
                     name: characterName,
-                    posX: targetBox.x,
-                    posY: targetBox.y
+                    posX: clickAt.x,
+                    posY: clickAt.y
                 })
             })
             const result = await response.json()
