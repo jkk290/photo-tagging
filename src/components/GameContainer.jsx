@@ -56,6 +56,7 @@ function GameContainer({ updateScores }) {
     const handleClick = (e) => {
         const clickX = e.nativeEvent.offsetX
         const clickY = e.nativeEvent.offsetY
+        console.log(`Click at ${clickX}, ${clickY}`)
         setTargetBox({ x: clickX, y: clickY, display: true})
         setPopUp({ x: clickX, y: clickY, display: true })
     }

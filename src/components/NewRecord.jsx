@@ -14,7 +14,8 @@ function NewRecord({ saveRecord }) {
             <br />
             <input 
             type="text" 
-            name="playerName" 
+            name="playerName"
+            id="playerName" 
             value={playerNameField}
             onChange={(e) => setPlayerNameField(e.target.value)}
             />
